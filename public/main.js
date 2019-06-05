@@ -41,7 +41,7 @@ module.exports = ".addForm {\n  background-color: rgb(73, 141, 209);\n  display:
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<form class=\"addForm\" #itemForm=\"ngForm\" (ngSubmit)=\"addItem(itemForm)\">\n  <label for=\"\">ID:</label>\n  <input type=\"text\" ngModel name=\"id\" />\n  <label for=\"\">Product Name:</label>\n  <input type=\"text\" ngModel name=\"product\" />\n  <label for=\"\">Price:</label>\n  <input type=\"text\" ngModel name=\"price\" />\n  <label for=\"\">Quantity</label>\n  <input type=\"text\" ngModel name=\"quantity\" />\n  <button class=\"addBtn\">Add Item</button>\n</form>\n\n<p>{{ cart }}</p>\n<div *ngFor=\"let item of cartItems\">\n  <p>\n    ID:\n    {{ item.id }}\n  </p>\n  <p>Product: {{ item.product }}</p>\n  <p>Price: {{ item.price | currency }}</p>\n  <p>Quantity: {{ item.quantity }}</p>\n  <button class=\"deleteBtn\" (click)=\"deleteItem(item.id)\">X</button>\n</div>\n"
+module.exports = "<form class=\"addForm\" #itemForm=\"ngForm\" (ngSubmit)=\"addItem(itemForm)\">\n  <!-- <label for=\"\">ID:</label>\n  <input type=\"text\" ngModel name=\"id\" /> -->\n  <label for=\"\">Product Name:</label>\n  <input type=\"text\" ngModel name=\"product\" />\n  <label for=\"\">Price:</label>\n  <input type=\"text\" ngModel name=\"price\" />\n  <label for=\"\">Quantity</label>\n  <input type=\"text\" ngModel name=\"quantity\" />\n  <button class=\"addBtn\">Add Item</button>\n</form>\n\n<p>{{ cart }}</p>\n<div *ngFor=\"let item of cartItems; index as i\">\n  <!-- <p>\n    ID:\n    {{ item.id }}\n  </p> -->\n  <p>Product: {{ item.product }}</p>\n  <p>Price: {{ item.price }}</p>\n  <p>Quantity: {{ item.quantity }}</p>\n  <button class=\"deleteBtn\" (click)=\"deleteItem(item.id)\">X</button>\n\n  <button (click)=\"toggleEditForm(i)\">Edit Item</button>\n\n  <form\n    *ngIf=\"item.beingEdited\"\n    class=\"addForm\"\n    #editForm=\"ngForm\"\n    (ngSubmit)=\"editItem(item)\"\n  >\n    <label for=\"\">Product Name:</label>\n    <input type=\"text\" [(ngModel)]=\"item.product\" name=\"product\" />\n    <label for=\"\">Price:</label>\n    <input type=\"text\" [(ngModel)]=\"item.price\" name=\"price\" />\n    <label for=\"\">Quantity</label>\n    <input type=\"text\" [(ngModel)]=\"item.quantity\" name=\"quantity\" />\n    <button class=\"editBtn\">Edit Item</button>\n  </form>\n</div>\n"
 
 /***/ }),
 
@@ -69,10 +69,10 @@ var AppComponent = /** @class */ (function () {
             _this.cartItems = response;
         });
     }
-    AppComponent.prototype.addItem = function (item) {
+    AppComponent.prototype.addItem = function (newItem) {
         var _this = this;
-        console.log(item);
-        this.cartService.addItem(item.value).subscribe(function (response) {
+        // console.log(item.value);
+        this.cartService.addItem(newItem.value).subscribe(function (response) {
             _this.cartItems = response;
         });
     };
@@ -81,6 +81,17 @@ var AppComponent = /** @class */ (function () {
         this.cartService.deleteItem(id).subscribe(function (response) {
             _this.cartItems = response;
         });
+    };
+    AppComponent.prototype.editItem = function (item) {
+        var _this = this;
+        console.log(item);
+        this.cartService.editItem(item).subscribe(function (response) {
+            _this.cartItems = response;
+        });
+    };
+    AppComponent.prototype.toggleEditForm = function (index) {
+        this.cartItems[index].beingEdited = !this.cartItems[index].beingEdited;
+        console.log(this.cartItems);
     };
     AppComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
@@ -167,6 +178,12 @@ var CartService = /** @class */ (function () {
     };
     CartService.prototype.deleteItem = function (id) {
         return this.http.delete("/api/cart-items/" + id, { responseType: "json" });
+    };
+    CartService.prototype.editItem = function (item) {
+        console.log(item);
+        return this.http.put("/api/cart-items/" + item.id, item, {
+            responseType: "json"
+        });
     };
     CartService = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])({

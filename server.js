@@ -1,11 +1,11 @@
 "use strict";
 const express = require("express");
 const app = express();
-const routes = require("./routes");
+const routes = require("./routes"); //importing route module
 
 app.use(express.static(__dirname + "/public"));
 app.use(express.json());
-app.use("/api", routes);
+app.use("/api", routes); // use routing module
 
 const port = 3000;
 app.listen(port, () => {

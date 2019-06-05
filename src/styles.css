@@ -1,7 +1,17 @@
 /* You can add global styles to this file, and also import other style files */
-/* body {
+body {
+  margin: 0;
+  padding: 0;
+  background-color: rgb(96, 184, 211);
+}
+
+/* app-root { */
+/* margin: 0;
+  padding: 0;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  flex-wrap: wrap; */
+/* flex-direction: column; */
+/* justify-content: center;
   align-items: center;
-} */
+  width: 100%; */
+/* } */

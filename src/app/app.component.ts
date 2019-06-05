@@ -14,9 +14,9 @@ export class AppComponent {
     });
   }
 
-  addItem(item) {
-    console.log(item);
-    this.cartService.addItem(item.value).subscribe(response => {
+  addItem(newItem) {
+    // console.log(item.value);
+    this.cartService.addItem(newItem.value).subscribe(response => {
       this.cartItems = response;
     });
   }
@@ -25,5 +25,23 @@ export class AppComponent {
     this.cartService.deleteItem(id).subscribe(response => {
       this.cartItems = response;
     });
+  }
+
+  editItem(item) {
+    console.log(item);
+
+    this.cartService.editItem(item).subscribe(response => {
+      this.cartItems = response;
+    });
+  }
+
+  showEditForm(index) {
+    this.cartItems[index].beingEdited = true;
+    // console.log(this.cartItems);
+  }
+
+  hideEditForm(index) {
+    this.cartItems[index].beingEdited = false;
+    // console.log(this.cartItems);
   }
 }

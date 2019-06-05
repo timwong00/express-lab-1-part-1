@@ -1,42 +1,52 @@
 "use strict";
-const express = require("express");
-const cartItems = require("./cart-items");
-// router method used to...
-const router = express.Router();
+const express = require("express"); //import express
+// const cartItems = require("./cart-items");
+const router = express.Router(); //declare a variable initialized to a router object
+const pool = require("./pg-connection-pool");
+
+function selectAll(res) {
+  pool
+    .query("SELECT * FROM shoppingcart ORDER BY id")
+    .then(results => res.json(results.rows));
+}
 
 router.get("/cart-items", (req, res) => {
-  res.json(cartItems);
+  selectAll(res);
 });
 
 router.post("/cart-items", (req, res) => {
-  console.log(req.body);
-  cartItems.push(req.body);
-  res.json(cartItems);
+  pool
+    .query(
+      "INSERT INTO shoppingcart (product, price, quantity) VALUES ($1::text, $2::money, $3::int)",
+      [req.body.product, req.body.price, req.body.quantity]
+    )
+    .then(() => {
+      selectAll(res);
+    });
 });
 
 router.put("/cart-items/:id", (req, res) => {
-  // console.log(req.body);
-  // console.log(typeof req.params.id);
-  cartItems.splice(
-    cartItems.findIndex(element => element.id == req.params.id),
-    1,
-    req.body
-  );
-  // for (let i = 0; i < cartItems.length; i++) {
-  //   if (cartItems[i].id === req.params.id) {
-  //     cartItems.splice(i, 1, req.body);
-  //   }
-  // }
-  res.json(cartItems);
+  pool
+    .query(
+      "UPDATE shoppingcart SET product=$1::text, price=$2::money, quantity=$3::int WHERE id=$4::int",
+      [
+        req.body.product,
+        req.body.price,
+        req.body.quantity,
+        Number(req.params.id)
+      ]
+    )
+    .then(() => {
+      selectAll(res);
+    });
 });
 
 router.delete("/cart-items/:id", (req, res) => {
-  // console.log(req.params.id);
-  cartItems.splice(
-    cartItems.findIndex(element => element.id == req.params.id),
-    1
-  );
-  res.json(cartItems);
+  pool
+    .query("DELETE FROM shoppingcart WHERE id=$1::int", [Number(req.params.id)])
+    .then(() => {
+      selectAll(res);
+    });
 });
 
 module.exports = router;

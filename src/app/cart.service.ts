@@ -18,4 +18,12 @@ export class CartService {
   deleteItem(id) {
     return this.http.delete(`/api/cart-items/${id}`, { responseType: "json" });
   }
+
+  editItem(item) {
+    // console.log(item);
+
+    return this.http.put(`/api/cart-items/${item.id}`, item, {
+      responseType: "json"
+    });
+  }
 }

@@ -1,23 +1,62 @@
-<form class="addForm" #itemForm="ngForm" (ngSubmit)="addItem(itemForm)">
-  <label for="">ID:</label>
-  <input type="text" ngModel name="id" />
-  <label for="">Product Name:</label>
-  <input type="text" ngModel name="product" />
-  <label for="">Price:</label>
-  <input type="text" ngModel name="price" />
-  <label for="">Quantity</label>
-  <input type="text" ngModel name="quantity" />
-  <button class="addBtn">Add Item</button>
-</form>
+<div class="addFormContainer">
+  <h1>Cart Mart</h1>
+  <form class="addForm" #itemForm="ngForm" (ngSubmit)="addItem(itemForm)">
+    <!-- <label for="">ID:</label>
+  <input type="text" ngModel name="id" /> -->
+    <label for="">Product Name:</label>
+    <input class="addInput" type="text" ngModel name="product" />
+    <label for="">Price:</label>
+    <input class="addInput" type="text" ngModel name="price" />
+    <label for="">Quantity</label>
+    <input class="addInput" type="text" ngModel name="quantity" />
+    <button class="addBtn">Add Item</button>
+  </form>
+</div>
 
-<p>{{ cart }}</p>
-<div *ngFor="let item of cartItems">
-  <p>
+<!-- <p>{{ cart }}</p> -->
+<div class="itemContainer">
+  <div class="item" *ngFor="let item of cartItems; index as i">
+    <!-- <p>
     ID:
     {{ item.id }}
-  </p>
-  <p>Product: {{ item.product }}</p>
-  <p>Price: {{ item.price | currency }}</p>
-  <p>Quantity: {{ item.quantity }}</p>
-  <button class="deleteBtn" (click)="deleteItem(item.id)">X</button>
+  </p> -->
+    <p>Product: {{ item.product }}</p>
+    <p>Price: {{ item.price }}</p>
+    <p>Quantity: {{ item.quantity }}</p>
+    <button class="deleteBtn" (click)="deleteItem(item.id)">X</button>
+
+    <button class="editBtn" *ngIf="!item.beingEdited" (click)="showEditForm(i)">
+      Edit Item
+    </button>
+
+    <form
+      *ngIf="item.beingEdited"
+      class="editForm"
+      #editForm="ngForm"
+      (ngSubmit)="editItem(item, hideEditForm(i))"
+    >
+      <label for="">Product Name:</label>
+      <input
+        class="editInput"
+        type="text"
+        [(ngModel)]="item.product"
+        name="product"
+      />
+      <label for="">Price:</label>
+      <input
+        class="editInput"
+        type="text"
+        [(ngModel)]="item.price"
+        name="price"
+      />
+      <label for="">Quantity</label>
+      <input
+        class="editInput"
+        type="text"
+        [(ngModel)]="item.quantity"
+        name="quantity"
+      />
+      <button class="editBtn">Edit Item</button>
+    </form>
+  </div>
 </div>
